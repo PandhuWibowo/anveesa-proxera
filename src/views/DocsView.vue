@@ -6,15 +6,12 @@ const activeSection = ref('getting-started')
 const sections = [
   { id: 'getting-started',  label: 'Getting Started' },
   { id: 'architecture',     label: 'Architecture' },
-  { id: 'api-servers',      label: 'API — Servers' },
-  { id: 'api-routes',       label: 'API — Routes' },
-  { id: 'api-alerts',       label: 'API — Alerts' },
-  { id: 'api-dashboard',    label: 'API — Dashboard' },
-  { id: 'websocket',        label: 'WebSocket' },
-  { id: 'sse-logs',         label: 'SSE Log Stream' },
   { id: 'adapters',         label: 'Proxy Adapters' },
+  { id: 'configuration',    label: 'Configuration Guide' },
   { id: 'encryption',       label: 'Encryption' },
   { id: 'docker',           label: 'Docker' },
+  { id: 'troubleshooting',  label: 'Troubleshooting' },
+  { id: 'changelog',        label: 'Changelog' },
 ]
 
 function scrollTo(id: string) {
@@ -136,207 +133,6 @@ ProxyAdapter implementations:
         </ul>
       </section>
 
-      <!-- ── API Servers ────────────────────────────────────────────── -->
-      <section id="api-servers" class="docs-section">
-        <h2 class="docs-h2">API — Servers</h2>
-        <p class="docs-p">Base path: <code>/api/v1/servers</code></p>
-
-        <div class="docs-table-wrap">
-          <table class="docs-table">
-            <thead><tr><th>Method</th><th>Path</th><th>Description</th></tr></thead>
-            <tbody>
-              <tr><td><span class="method get">GET</span></td><td><code>/servers</code></td><td>List all. Query: <code>?type=nginx</code> <code>?status=online</code></td></tr>
-              <tr><td><span class="method post">POST</span></td><td><code>/servers</code></td><td>Create server</td></tr>
-              <tr><td><span class="method get">GET</span></td><td><code>/servers/:id</code></td><td>Get single server</td></tr>
-              <tr><td><span class="method put">PUT</span></td><td><code>/servers/:id</code></td><td>Full update</td></tr>
-              <tr><td><span class="method patch">PATCH</span></td><td><code>/servers/:id</code></td><td>Partial update</td></tr>
-              <tr><td><span class="method del">DELETE</span></td><td><code>/servers/:id</code></td><td>Soft delete, evicts SSH pool</td></tr>
-              <tr><td><span class="method get">GET</span></td><td><code>/servers/:id/health</code></td><td>Live health check + latency</td></tr>
-              <tr><td><span class="method get">GET</span></td><td><code>/servers/:id/metrics</code></td><td>Live metrics from adapter</td></tr>
-              <tr><td><span class="method get">GET</span></td><td><code>/servers/:id/config</code></td><td>Fetch proxy config text</td></tr>
-              <tr><td><span class="method put">PUT</span></td><td><code>/servers/:id/config</code></td><td>Write + validate config</td></tr>
-              <tr><td><span class="method post">POST</span></td><td><code>/servers/:id/reload</code></td><td>Graceful reload signal</td></tr>
-              <tr><td><span class="method get">GET</span></td><td><code>/servers/:id/logs</code></td><td>SSE log stream</td></tr>
-            </tbody>
-          </table>
-        </div>
-
-        <h3 class="docs-h3">Create Server payload</h3>
-        <pre class="docs-code"><code>{
-  <span class="k">"name"</span>:           <span class="s">"prod-nginx"</span>,
-  <span class="k">"host"</span>:           <span class="s">"10.0.1.10"</span>,
-  <span class="k">"port"</span>:           22,
-  <span class="k">"proxyType"</span>:      <span class="s">"nginx"</span>,       <span class="c">// nginx | traefik | caddy | haproxy | other</span>
-  <span class="k">"connectionType"</span>: <span class="s">"ssh"</span>,         <span class="c">// ssh | api</span>
-  <span class="k">"sshUser"</span>:        <span class="s">"ubuntu"</span>,
-  <span class="k">"sshKey"</span>:         <span class="s">"-----BEGIN..."</span>, <span class="c">// stored AES-256-GCM encrypted</span>
-  <span class="k">"tags"</span>:           [<span class="s">"production"</span>, <span class="s">"us-east"</span>],
-  <span class="k">"location"</span>:       <span class="s">"us-east-1"</span>,
-  <span class="k">"description"</span>:    <span class="s">"Primary load balancer"</span>
-}</code></pre>
-
-        <div class="docs-callout info">
-          <strong>Token masking</strong> — API responses never return raw tokens. They are masked as <code>***last4</code>.
-        </div>
-      </section>
-
-      <!-- ── API Routes ─────────────────────────────────────────────── -->
-      <section id="api-routes" class="docs-section">
-        <h2 class="docs-h2">API — Routes</h2>
-        <p class="docs-p">Base path: <code>/api/v1/routes</code></p>
-
-        <div class="docs-table-wrap">
-          <table class="docs-table">
-            <thead><tr><th>Method</th><th>Path</th><th>Description</th></tr></thead>
-            <tbody>
-              <tr><td><span class="method get">GET</span></td><td><code>/routes</code></td><td>List. Query: <code>?serverId=</code></td></tr>
-              <tr><td><span class="method post">POST</span></td><td><code>/routes</code></td><td>Create route</td></tr>
-              <tr><td><span class="method get">GET</span></td><td><code>/routes/:id</code></td><td>Get single</td></tr>
-              <tr><td><span class="method put">PUT</span></td><td><code>/routes/:id</code></td><td>Full update</td></tr>
-              <tr><td><span class="method patch">PATCH</span></td><td><code>/routes/:id</code></td><td>Partial update</td></tr>
-              <tr><td><span class="method del">DELETE</span></td><td><code>/routes/:id</code></td><td>Soft delete</td></tr>
-              <tr><td><span class="method post">POST</span></td><td><code>/routes/:id/toggle</code></td><td>Flip <code>enabled</code> bool</td></tr>
-            </tbody>
-          </table>
-        </div>
-
-        <h3 class="docs-h3">Create Route payload</h3>
-        <pre class="docs-code"><code>{
-  <span class="k">"serverId"</span>:            <span class="s">"uuid"</span>,
-  <span class="k">"name"</span>:               <span class="s">"api-route"</span>,
-  <span class="k">"enabled"</span>:            true,
-  <span class="k">"matchHost"</span>:          <span class="s">"api.example.com"</span>,
-  <span class="k">"matchPath"</span>:          <span class="s">"/v1/*"</span>,
-  <span class="k">"targetUpstream"</span>:     <span class="s">"http://backend:3000"</span>,
-  <span class="k">"loadBalancingMethod"</span>: <span class="s">"round_robin"</span>, <span class="c">// round_robin | least_conn | ip_hash | random</span>
-  <span class="k">"sslEnabled"</span>:         true,
-  <span class="k">"middlewares"</span>:        [<span class="s">"rate-limit"</span>, <span class="s">"auth"</span>],
-  <span class="k">"priority"</span>:           10
-}</code></pre>
-      </section>
-
-      <!-- ── API Alerts ─────────────────────────────────────────────── -->
-      <section id="api-alerts" class="docs-section">
-        <h2 class="docs-h2">API — Alerts</h2>
-        <p class="docs-p">Base path: <code>/api/v1/alerts</code></p>
-
-        <div class="docs-table-wrap">
-          <table class="docs-table">
-            <thead><tr><th>Method</th><th>Path</th><th>Description</th></tr></thead>
-            <tbody>
-              <tr><td><span class="method get">GET</span></td><td><code>/alerts</code></td><td>List. Query: <code>?status=active</code> <code>?severity=critical</code></td></tr>
-              <tr><td><span class="method post">POST</span></td><td><code>/alerts</code></td><td>Create alert (also broadcasts via WS)</td></tr>
-              <tr><td><span class="method get">GET</span></td><td><code>/alerts/:id</code></td><td>Get single</td></tr>
-              <tr><td><span class="method patch">PATCH</span></td><td><code>/alerts/:id</code></td><td>Update status / severity</td></tr>
-              <tr><td><span class="method del">DELETE</span></td><td><code>/alerts/:id</code></td><td>Delete</td></tr>
-              <tr><td><span class="method post">POST</span></td><td><code>/alerts/:id/acknowledge</code></td><td>Set status → acknowledged</td></tr>
-              <tr><td><span class="method post">POST</span></td><td><code>/alerts/:id/resolve</code></td><td>Set status → resolved + resolvedAt</td></tr>
-              <tr><td><span class="method post">POST</span></td><td><code>/alerts/bulk/acknowledge</code></td><td>Body: <code>{"ids":["…"]}</code></td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <!-- ── API Dashboard ──────────────────────────────────────────── -->
-      <section id="api-dashboard" class="docs-section">
-        <h2 class="docs-h2">API — Dashboard</h2>
-
-        <div class="docs-table-wrap">
-          <table class="docs-table">
-            <thead><tr><th>Method</th><th>Path</th><th>Description</th></tr></thead>
-            <tbody>
-              <tr><td><span class="method get">GET</span></td><td><code>/dashboard/stats</code></td><td>Server counts, alert counts, avg metrics</td></tr>
-              <tr><td><span class="method get">GET</span></td><td><code>/dashboard/traffic</code></td><td>Traffic points. Query: <code>?hours=24</code> (max 168)</td></tr>
-            </tbody>
-          </table>
-        </div>
-
-        <h3 class="docs-h3">Stats response</h3>
-        <pre class="docs-code"><code>{
-  <span class="k">"totalServers"</span>:       4,
-  <span class="k">"onlineServers"</span>:      3,
-  <span class="k">"offlineServers"</span>:     1,
-  <span class="k">"totalRoutes"</span>:        18,
-  <span class="k">"activeAlerts"</span>:       2,
-  <span class="k">"totalRequestsToday"</span>: 482910,
-  <span class="k">"avgErrorRate"</span>:       0.8,
-  <span class="k">"avgLatency"</span>:         24.3
-}</code></pre>
-      </section>
-
-      <!-- ── WebSocket ──────────────────────────────────────────────── -->
-      <section id="websocket" class="docs-section">
-        <h2 class="docs-h2">WebSocket</h2>
-        <p class="docs-p">Connect to <code>ws://localhost:8080/ws</code> for real-time metrics and alert pushes.</p>
-
-        <h3 class="docs-h3">Subscribe to server metrics</h3>
-        <pre class="docs-code"><code><span class="c">// Send from client:</span>
-{
-  <span class="k">"type"</span>: <span class="s">"subscribe"</span>,
-  <span class="k">"payload"</span>: {
-    <span class="k">"serverIds"</span>: [<span class="s">"uuid-1"</span>, <span class="s">"uuid-2"</span>],
-    <span class="k">"channel"</span>: <span class="s">"metrics"</span>
-  }
-}
-
-<span class="c">// Server broadcasts:</span>
-{ <span class="k">"type"</span>: <span class="s">"metrics"</span>,       <span class="k">"payload"</span>: ServerMetrics }
-{ <span class="k">"type"</span>: <span class="s">"alert"</span>,         <span class="k">"payload"</span>: Alert }
-{ <span class="k">"type"</span>: <span class="s">"status_change"</span>, <span class="k">"payload"</span>: { <span class="k">"serverId"</span>: <span class="s">"…"</span>, <span class="k">"status"</span>: <span class="s">"offline"</span> } }</code></pre>
-
-        <h3 class="docs-h3">Frontend usage</h3>
-        <pre class="docs-code"><code><span class="k">import</span> { ProxeraWebSocket } <span class="k">from</span> <span class="s">'@/api/ws'</span>
-
-<span class="k">const</span> ws = <span class="k">new</span> ProxeraWebSocket()
-
-ws.subscribe([<span class="s">'server-uuid'</span>])
-
-<span class="k">const</span> off = ws.on(<span class="s">'metrics'</span>, (payload) =&gt; {
-  console.log(payload.requestsPerSec)
-})
-
-<span class="c">// Cleanup</span>
-off()
-ws.destroy()</code></pre>
-
-        <div class="docs-callout info">
-          <strong>Auto-reconnect</strong> — <code>ProxeraWebSocket</code> reconnects automatically with exponential backoff (up to 10 attempts). Subscriptions are re-sent after reconnect.
-        </div>
-      </section>
-
-      <!-- ── SSE Logs ───────────────────────────────────────────────── -->
-      <section id="sse-logs" class="docs-section">
-        <h2 class="docs-h2">SSE Log Stream</h2>
-        <p class="docs-p">Real-time log streaming via Server-Sent Events.</p>
-
-        <pre class="docs-code"><code>GET /api/v1/servers/:id/logs
-Content-Type: text/event-stream
-
-retry: 3000
-
-id: l1
-event: log
-data: {"id":"l1","serverId":"uuid","level":"info","message":"GET /health 200 2ms","timestamp":"…"}
-
-event: heartbeat
-data: {"timestamp":"…"}</code></pre>
-
-        <h3 class="docs-h3">Consuming in JavaScript</h3>
-        <pre class="docs-code"><code><span class="k">const</span> es = <span class="k">new</span> EventSource(<span class="s">`/api/v1/servers/<span class="k">${id}</span>/logs`</span>)
-
-es.addEventListener(<span class="s">'log'</span>, (e) =&gt; {
-  <span class="k">const</span> entry = JSON.parse(e.data)
-  console.log(entry.level, entry.message)
-})
-
-<span class="c">// Close when done</span>
-es.close()</code></pre>
-
-        <div class="docs-callout warn">
-          <strong>NGINX only</strong> — Log streaming via SSH <code>tail -F</code> is supported for NGINX. Traefik, Caddy, and HAProxy adapters return <code>501 Not Supported</code> for this endpoint.
-        </div>
-      </section>
-
       <!-- ── Proxy Adapters ─────────────────────────────────────────── -->
       <section id="adapters" class="docs-section">
         <h2 class="docs-h2">Proxy Adapters</h2>
@@ -404,6 +200,63 @@ es.close()</code></pre>
         </div>
       </section>
 
+      <!-- ── Configuration Guide ───────────────────────────────────── -->
+      <section id="configuration" class="docs-section">
+        <h2 class="docs-h2">Configuration Guide</h2>
+        <p class="docs-p">This guide walks through configuring Proxera from first launch — adding servers, defining routes, tuning alerts, and adjusting platform settings.</p>
+
+        <h3 class="docs-h3">1. Adding a Proxy Server</h3>
+        <p class="docs-p">Navigate to <strong>Servers → Add Server</strong>. Fill in the connection details:</p>
+        <ul class="docs-list">
+          <li><strong>Server Name</strong> — a human-readable label (e.g. <code>prod-nginx-01</code>)</li>
+          <li><strong>Host / IP</strong> — reachable address from the Proxera backend</li>
+          <li><strong>Port</strong> — SSH port (default <code>22</code>) or API port</li>
+          <li><strong>Proxy Type</strong> — NGINX, Traefik, Caddy, HAProxy, or Other</li>
+          <li><strong>Connection Type</strong> — <code>ssh</code> or <code>api</code></li>
+        </ul>
+        <div class="docs-callout info">
+          <strong>SSH connection</strong> — paste the private key PEM content directly into the SSH Key field. Proxera stores it AES-256-GCM encrypted; the plaintext is never written to disk.
+        </div>
+
+        <h3 class="docs-h3">2. Managing Routes</h3>
+        <p class="docs-p">Routes define how traffic is forwarded from a domain/path to an upstream service. Go to <strong>Routes → New Route</strong>:</p>
+        <ul class="docs-list">
+          <li><strong>Match Host</strong> — domain the rule applies to (e.g. <code>api.example.com</code>)</li>
+          <li><strong>Match Path</strong> — path prefix or glob (e.g. <code>/v1/*</code>). Leave blank to match all paths.</li>
+          <li><strong>Target Upstream</strong> — backend URL (e.g. <code>http://10.0.1.5:3000</code>)</li>
+          <li><strong>Load Balancing</strong> — <code>round_robin</code>, <code>least_conn</code>, <code>ip_hash</code>, or <code>random</code></li>
+          <li><strong>SSL</strong> — enable to terminate TLS at the proxy</li>
+          <li><strong>Priority</strong> — lower number = higher precedence when multiple routes match</li>
+        </ul>
+        <div class="docs-callout warn">
+          <strong>Route propagation</strong> — after saving, the route is persisted in SQLite. To apply it to the live proxy config, use <strong>Configuration → Push Config</strong> for the target server.
+        </div>
+
+        <h3 class="docs-h3">3. Alert Rules</h3>
+        <p class="docs-p">Alerts are triggered automatically by the monitoring engine. You can also define custom thresholds under <strong>Alerts → New Alert Rule</strong>:</p>
+        <ul class="docs-list">
+          <li><strong>Metric</strong> — CPU usage, memory, error rate, or latency</li>
+          <li><strong>Threshold</strong> — numeric value that triggers the alert</li>
+          <li><strong>Severity</strong> — <code>info</code>, <code>warning</code>, or <code>critical</code></li>
+          <li><strong>Cooldown</strong> — minimum minutes between repeated alerts for the same server</li>
+        </ul>
+
+        <h3 class="docs-h3">4. Platform Settings</h3>
+        <p class="docs-p">Under <strong>Settings</strong> you can configure:</p>
+        <div class="docs-table-wrap">
+          <table class="docs-table">
+            <thead><tr><th>Setting</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr><td>Theme</td><td>Light / dark mode preference, persisted in localStorage</td></tr>
+              <tr><td>Metrics Interval</td><td>How often the dashboard polls for live metrics (5 s – 60 s)</td></tr>
+              <tr><td>SSH Pool Timeout</td><td>Idle eviction time for pooled SSH connections (default 10 min)</td></tr>
+              <tr><td>Notification Channel</td><td>Webhook URL for outbound alert notifications (Slack, Teams, etc.)</td></tr>
+              <tr><td>Retention Period</td><td>How many days of query logs and alert history to keep in SQLite</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
       <!-- ── Encryption ─────────────────────────────────────────────── -->
       <section id="encryption" class="docs-section">
         <h2 class="docs-h2">Encryption</h2>
@@ -458,6 +311,107 @@ CGO_ENABLED=0 go build -ldflags="-w -s" -o proxera .
 
 <span class="c"># Stage 2 — Runtime (distroless/static-debian12:nonroot)</span>
 <span class="c"># Final image: ~8MB, no shell, non-root user</span></code></pre>
+      </section>
+
+      <!-- ── Troubleshooting ────────────────────────────────────────── -->
+      <section id="troubleshooting" class="docs-section">
+        <h2 class="docs-h2">Troubleshooting</h2>
+
+        <h3 class="docs-h3">SSH connection refused</h3>
+        <ul class="docs-list">
+          <li>Confirm the backend container/process can reach the target host on the SSH port.</li>
+          <li>Verify the SSH user has permission to read <code>/etc/nginx/nginx.conf</code> and run <code>nginx -s reload</code>.</li>
+          <li>Check that the private key PEM was pasted without leading/trailing whitespace.</li>
+          <li>If using a passphrase-protected key, remove the passphrase first — Proxera does not support encrypted keys.</li>
+        </ul>
+        <pre class="docs-code"><code><span class="c"># Test SSH access from the machine running Proxera</span>
+ssh -i /tmp/test_key ubuntu@10.0.1.10 "nginx -v"</code></pre>
+
+        <h3 class="docs-h3">NGINX adapter returns stale metrics</h3>
+        <ul class="docs-list">
+          <li>Ensure the <code>stub_status</code> module is enabled and the endpoint is accessible from localhost.</li>
+          <li>Add to your <code>nginx.conf</code>:</li>
+        </ul>
+        <pre class="docs-code"><code>server {
+  listen 127.0.0.1:8888;
+  location /nginx_status {
+    stub_status;
+    allow 127.0.0.1;
+    deny all;
+  }
+}</code></pre>
+
+        <h3 class="docs-h3">Config validation fails on push</h3>
+        <ul class="docs-list">
+          <li>Proxera runs <code>nginx -t</code> before applying. The raw error output is returned in the API response — check the Configuration page for the inline error message.</li>
+          <li>Common causes: unclosed <code>{ }</code> blocks, missing semicolons, or referencing an upstream that doesn't exist.</li>
+        </ul>
+        <div class="docs-callout warn">
+          <strong>No partial rollback</strong> — if a config push fails validation, the existing live config is left untouched. Fix the error in the editor and retry.
+        </div>
+
+        <h3 class="docs-h3">Traefik / Caddy shows "not supported"</h3>
+        <p class="docs-p">Not all adapters support every feature. See the <a class="docs-link" href="#adapters">Proxy Adapters</a> section for a capability matrix. Features marked "not supported" are intentionally disabled to avoid inconsistent behaviour across adapter types.</p>
+
+        <h3 class="docs-h3">Database locked error on startup</h3>
+        <ul class="docs-list">
+          <li>SQLite allows only one writer at a time. Make sure no other Proxera process is running against the same <code>.db</code> file.</li>
+          <li>If running in Docker, ensure the <code>/data</code> volume is not bind-mounted to a network filesystem (NFS/CIFS) — use a local volume instead.</li>
+        </ul>
+
+        <h3 class="docs-h3">Frontend shows blank page after upgrade</h3>
+        <ul class="docs-list">
+          <li>Clear the browser cache or do a hard reload (<code>Ctrl + Shift + R</code>).</li>
+          <li>If running behind a reverse proxy, ensure it is not caching the <code>index.html</code> response — set <code>Cache-Control: no-store</code> for HTML files.</li>
+        </ul>
+      </section>
+
+      <!-- ── Changelog ──────────────────────────────────────────────── -->
+      <section id="changelog" class="docs-section">
+        <h2 class="docs-h2">Changelog</h2>
+
+        <div class="changelog-entry">
+          <div class="changelog-header">
+            <span class="changelog-version">v0.3.0</span>
+            <span class="changelog-date">2025-06-10</span>
+            <span class="changelog-tag added">minor</span>
+          </div>
+          <ul class="docs-list">
+            <li>Added Analytics view with traffic trend charts and error-rate breakdowns</li>
+            <li>Route Builder now supports <code>ip_hash</code> and <code>random</code> load balancing methods</li>
+            <li>Alert bulk-acknowledge action added to Alerts page</li>
+            <li>Dark / light theme toggle persisted per-user in localStorage</li>
+          </ul>
+        </div>
+
+        <div class="changelog-entry">
+          <div class="changelog-header">
+            <span class="changelog-version">v0.2.0</span>
+            <span class="changelog-date">2025-04-22</span>
+            <span class="changelog-tag added">minor</span>
+          </div>
+          <ul class="docs-list">
+            <li>Caddy adapter: config read/write via Admin API (<code>POST /load</code>)</li>
+            <li>HAProxy adapter: CSV stats parsing for <code>scur</code> and <code>req_tot</code></li>
+            <li>Real-time monitoring view with 2-second live sparkline charts</li>
+            <li>SSH connection pool with 10-minute idle eviction and 30-second keepalive</li>
+            <li>AES-256-GCM encryption for all stored credentials</li>
+          </ul>
+        </div>
+
+        <div class="changelog-entry">
+          <div class="changelog-header">
+            <span class="changelog-version">v0.1.0</span>
+            <span class="changelog-date">2025-02-14</span>
+            <span class="changelog-tag">initial</span>
+          </div>
+          <ul class="docs-list">
+            <li>Initial release — NGINX (SSH) and Traefik (REST) adapters</li>
+            <li>Server and route CRUD with SQLite persistence via GORM</li>
+            <li>Dashboard with request volume, latency, and alert summary</li>
+            <li>Go + Vue 3 + Vite project scaffold with Docker multi-stage build</li>
+          </ul>
+        </div>
       </section>
 
     </main>
@@ -657,33 +611,6 @@ code {
   background: var(--color-hover);
 }
 
-/* ─── Method badges ──────────────────────────────────────────────── */
-.method {
-  display: inline-block;
-  font-size: 10px;
-  font-weight: 700;
-  font-family: 'JetBrains Mono', monospace;
-  padding: 2px 6px;
-  border-radius: 4px;
-  letter-spacing: 0.03em;
-}
-.method.get   { background: rgba(91,199,130,0.15); color: #5bc782; }
-.method.post  { background: rgba(99,169,255,0.15); color: #63a9ff; }
-.method.put   { background: rgba(255,171,64,0.15); color: #ffab40; }
-.method.patch { background: rgba(180,130,255,0.15); color: #b482ff; }
-.method.del   { background: rgba(255,99,99,0.15);  color: #ff6363; }
-
-/* ─── Required badge ─────────────────────────────────────────────── */
-.badge-req {
-  display: inline-block;
-  font-size: 10px;
-  font-weight: 600;
-  padding: 1px 6px;
-  border-radius: 4px;
-  background: rgba(255,99,99,0.12);
-  color: #ff6363;
-}
-
 /* ─── Callouts ───────────────────────────────────────────────────── */
 .docs-callout {
   padding: 10px 14px;
@@ -747,6 +674,73 @@ code {
   color: var(--color-text-2);
   padding: 1px 6px;
   border-radius: 4px;
+}
+
+/* ─── Inline link ─────────────────────────────────────────────────── */
+.docs-link {
+  color: var(--color-primary);
+  text-decoration: none;
+  font-size: inherit;
+}
+.docs-link:hover { text-decoration: underline; }
+
+/* ─── Changelog ──────────────────────────────────────────────────── */
+.changelog-entry {
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+  background: var(--color-surface);
+}
+
+.changelog-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.changelog-version {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--color-text);
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: -0.02em;
+}
+
+.changelog-date {
+  font-size: 12px;
+  color: var(--color-text-3);
+}
+
+.changelog-tag {
+  margin-left: auto;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 99px;
+  background: var(--color-surface-2);
+  color: var(--color-text-3);
+  border: 1px solid var(--color-border);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.changelog-tag.added {
+  background: var(--color-primary-alpha);
+  color: var(--color-primary);
+  border-color: var(--color-primary-alpha2);
+}
+
+/* ─── Required badge ─────────────────────────────────────────────── */
+.badge-req {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: rgba(255,99,99,0.12);
+  color: #ff6363;
 }
 
 @media (max-width: 900px) {

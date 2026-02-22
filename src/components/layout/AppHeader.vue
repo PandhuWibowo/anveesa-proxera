@@ -15,6 +15,7 @@ const pageTitles: Record<string, { title: string; desc: string }> = {
   analytics:  { title: 'Analytics',     desc: 'Traffic insights and performance trends' },
   alerts:     { title: 'Alerts',        desc: 'System alerts and notification history' },
   settings:   { title: 'Settings',      desc: 'User management and platform settings' },
+  docs:       { title: 'Documentation', desc: 'API reference, guides, and deployment instructions' },
 }
 
 const current = () => {
